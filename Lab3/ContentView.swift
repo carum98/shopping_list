@@ -31,15 +31,22 @@ struct ContentView: View {
     }
     
     var listItems : some View {
-        List(self.itemsStore.items) { item in
-            Text(item.name)
+        List {
+            ForEach(self.itemsStore.items, id: \.id) { item in
+                Text(item.name)
+            }.onDelete(perform: deleteItem)
         }.navigationBarTitle("Lista de compra")
+        .navigationBarItems(trailing: EditButton())
     }
     
     func addItem() {
         itemsStore.items.append(Item(id: itemsStore.items.count + 1, name: itemName))
         
         self.itemName = ""
+    }
+    
+    func deleteItem(at index: IndexSet) {
+        itemsStore.items.remove(atOffsets: index)
     }
 }
 
