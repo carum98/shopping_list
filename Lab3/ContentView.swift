@@ -6,16 +6,16 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
+    @ObservedObject var itemsStore = ItemsStore()
+    
     var body: some View {
         NavigationView {
             VStack {
-                List {
-                    Text("Carlos")
-                    Text("Carlos")
-                    Text("Carlos")
-                    Text("Carlos")
+                List(self.itemsStore.items) { item in
+                    Text(item.name)
                 }.navigationBarTitle("Lista de compra")
             }
         }
