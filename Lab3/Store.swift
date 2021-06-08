@@ -10,7 +10,7 @@ import Combine
 
 struct Item : Identifiable {
     let id: Int;
-    let name: String;
+    var name: String;
 }
 
 class ItemsStore : ObservableObject {

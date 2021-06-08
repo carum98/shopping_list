@@ -19,6 +19,7 @@ struct ContentView: View {
                 listItems
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     private var inputItem : some View {
@@ -42,6 +43,7 @@ struct ContentView: View {
                 itemsStore.items.remove(atOffsets: $0)
             }
         }
+        .listStyle(InsetGroupedListStyle())
         .navigationBarTitle("Lista de compra")
         .navigationBarItems(leading: deleteButton, trailing: EditButton())
         .overlay(Group {
@@ -66,7 +68,6 @@ struct ContentView: View {
     
     private func addItem() {
         itemsStore.items.append(Item(id: itemsStore.items.count + 1, name: itemName))
-        
         self.itemName = ""
     }
     
