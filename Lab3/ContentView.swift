@@ -21,7 +21,7 @@ struct ContentView: View {
         }
     }
     
-    var inputItem : some View {
+    private var inputItem : some View {
         HStack {
             TextField("Ingresar articulo", text: self.$itemName)
             Button(action: addItem) {
@@ -30,7 +30,7 @@ struct ContentView: View {
         }.padding()
     }
     
-    var listItems : some View {
+    private var listItems : some View {
         List {
             ForEach(self.itemsStore.items, id: \.id) { item in
                 Text(item.name)
@@ -43,7 +43,7 @@ struct ContentView: View {
             }
         }
         .navigationBarTitle("Lista de compra")
-        .navigationBarItems(trailing: EditButton())
+        .navigationBarItems(leading: deleteButton, trailing: EditButton())
         .overlay(Group {
              if self.itemsStore.items.isEmpty {
                 VStack {
@@ -58,7 +58,13 @@ struct ContentView: View {
          })
     }
     
-    func addItem() {
+    private var deleteButton : some View {
+        Button(action: { itemsStore.items.removeAll() }) {
+            Image(systemName: "trash")
+        }
+    }
+    
+    private func addItem() {
         itemsStore.items.append(Item(id: itemsStore.items.count + 1, name: itemName))
         
         self.itemName = ""
