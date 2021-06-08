@@ -11,6 +11,7 @@
 		F76C8BD0266F1389005C5103 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76C8BCF266F1389005C5103 /* ContentView.swift */; };
 		F76C8BD2266F1389005C5103 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F76C8BD1266F1389005C5103 /* Assets.xcassets */; };
 		F76C8BD5266F1389005C5103 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F76C8BD4266F1389005C5103 /* Preview Assets.xcassets */; };
+		F76C8BDD266F1B56005C5103 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76C8BDC266F1B56005C5103 /* Store.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		F76C8BD1266F1389005C5103 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F76C8BD4266F1389005C5103 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F76C8BD6266F1389005C5103 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F76C8BDC266F1B56005C5103 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			children = (
 				F76C8BCD266F1389005C5103 /* Lab3App.swift */,
 				F76C8BCF266F1389005C5103 /* ContentView.swift */,
+				F76C8BDC266F1B56005C5103 /* Store.swift */,
 				F76C8BD1266F1389005C5103 /* Assets.xcassets */,
 				F76C8BD6266F1389005C5103 /* Info.plist */,
 				F76C8BD3266F1389005C5103 /* Preview Content */,
@@ -138,6 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F76C8BDD266F1B56005C5103 /* Store.swift in Sources */,
 				F76C8BD0266F1389005C5103 /* ContentView.swift in Sources */,
 				F76C8BCE266F1389005C5103 /* Lab3App.swift in Sources */,
 			);
