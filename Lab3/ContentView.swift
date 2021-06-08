@@ -34,9 +34,28 @@ struct ContentView: View {
         List {
             ForEach(self.itemsStore.items, id: \.id) { item in
                 Text(item.name)
-            }.onDelete(perform: deleteItem)
-        }.navigationBarTitle("Lista de compra")
+            }
+            .onMove {
+                itemsStore.items.move(fromOffsets: $0, toOffset: $1)
+            }
+            .onDelete {
+                itemsStore.items.remove(atOffsets: $0)
+            }
+        }
+        .navigationBarTitle("Lista de compra")
         .navigationBarItems(trailing: EditButton())
+        .overlay(Group {
+             if self.itemsStore.items.isEmpty {
+                VStack {
+                    Image(systemName: "archivebox")
+                        .font(.system(size: 50))
+                        .foregroundColor(Color.gray)
+                    Text("Lista vacia")
+                        .font(.system(size: 30))
+                        .foregroundColor(Color.gray)
+                }
+             }
+         })
     }
     
     func addItem() {
@@ -45,9 +64,6 @@ struct ContentView: View {
         self.itemName = ""
     }
     
-    func deleteItem(at index: IndexSet) {
-        itemsStore.items.remove(atOffsets: index)
-    }
 }
 
 struct ContentView_Previews: PreviewProvider {
