@@ -12,9 +12,13 @@ struct ContentView: View {
     @ObservedObject var itemsStore = ItemsStore()
     @State var itemName : String = ""
     @State var itemDescription : String = ""
+    @State var inputImage: UIImage?
     
     
     @State var showSheetView = false
+    @State var showingImagePicker = false
+    @State var isEditing = false
+    @State var image: Image?
     
     var body: some View {
         NavigationView {
@@ -36,12 +40,23 @@ struct ContentView: View {
                     Section(header: Text("Description")) {
                         TextField("Descripcion del articulo", text: $itemDescription)
                     }
+                    Section(header: Text("Imagen")) {
+                        Button("Seleccionar Imagen", action: {
+                            self.showingImagePicker = true
+                        })
+                    }
+                    if (image != nil) {
+                        image?.resizable().scaledToFit()
+                    }
                 }
                 .navigationBarTitle("Nuevo articulo")
                 .navigationBarItems(
                     leading:  Button("Cancelar", action: {showSheetView = false}),
                     trailing:  Button("Guardar", action: { showSheetView = false; addItem() })
                 )
+            }
+            .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
+                ImagePicker(image: self.$inputImage)
             }
         })
     }
@@ -62,9 +77,10 @@ struct ContentView: View {
             }
         }
         .listStyle(InsetGroupedListStyle())
+        .environment(\.editMode, .constant(self.isEditing ? EditMode.active : EditMode.inactive)).animation(Animation.spring())
         .navigationBarTitle("Lista de compra")
         .navigationBarItems(
-            leading: deleteButton, trailing: EditButton()
+            leading: deleteButton, trailing: editButton
         )
         .overlay(Group {
              if self.itemsStore.items.isEmpty {
@@ -109,7 +125,15 @@ struct ContentView: View {
                 Image(systemName: "trash")
                 Text("Borrar todo")
             }
-            
+        }
+    }
+    
+    private var editButton : some View {
+        Button(action: {
+            self.isEditing.toggle()
+        }) {
+            Text(isEditing ? "Cancelar" : "Editar")
+                .frame(height: 40)
         }
     }
     
@@ -118,12 +142,18 @@ struct ContentView: View {
             id: itemsStore.items.count + 1,
             name: itemName,
             description: itemDescription,
-            path: ""
+            image: image
         );
         itemsStore.items.append(item)
         
         self.itemName = ""
         self.itemDescription = ""
+        self.image = nil
+    }
+    
+    func loadImage() {
+        guard let inputImage = inputImage else { return }
+        image = Image(uiImage: inputImage)
     }
     
 }

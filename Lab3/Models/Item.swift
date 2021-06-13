@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Item : Identifiable {
     let id: Int;
     var name: String;
     var description: String;
-    var path: String;
+    var image: Image?;
 }
