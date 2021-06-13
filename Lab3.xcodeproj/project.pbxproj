@@ -54,6 +54,7 @@
 		F76C8BCC266F1389005C5103 /* Lab3 */ = {
 			isa = PBXGroup;
 			children = (
+				F7AD563E2676957D00E5CE37 /* Views */,
 				F76C8BCD266F1389005C5103 /* Lab3App.swift */,
 				F76C8BCF266F1389005C5103 /* ContentView.swift */,
 				F76C8BDC266F1B56005C5103 /* Store.swift */,
@@ -70,6 +71,13 @@
 				F76C8BD4266F1389005C5103 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F7AD563E2676957D00E5CE37 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

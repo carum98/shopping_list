@@ -11,15 +11,29 @@ import Combine
 struct ContentView: View {
     @ObservedObject var itemsStore = ItemsStore()
     @State var itemName : String = ""
+    @State var showSheetView = false
     
     var body: some View {
         NavigationView {
-            VStack {
-                inputItem
-                listItems
+            ZStack {
+                VStack {
+                    listItems
+                }
+                floatingActionButton
             }
+
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .sheet(isPresented: $showSheetView, content: {
+            NavigationView {
+                Form {
+                    inputItem
+                }
+                .navigationBarTitle("Nuevo articulo")
+                .navigationBarItems(
+                    trailing: Button("Cancelar", action: {showSheetView = false}))
+            }
+        })
     }
     
     private var inputItem : some View {
@@ -34,7 +48,10 @@ struct ContentView: View {
     private var listItems : some View {
         List {
             ForEach(self.itemsStore.items, id: \.id) { item in
-                Text(item.name)
+                NavigationLink(
+                    destination: Text(item.name)) {
+                    Text(item.name)
+                }
             }
             .onMove {
                 itemsStore.items.move(fromOffsets: $0, toOffset: $1)
@@ -45,7 +62,9 @@ struct ContentView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .navigationBarTitle("Lista de compra")
-        .navigationBarItems(leading: deleteButton, trailing: EditButton())
+        .navigationBarItems(
+            leading: deleteButton, trailing: EditButton()
+        )
         .overlay(Group {
              if self.itemsStore.items.isEmpty {
                 VStack {
@@ -57,12 +76,39 @@ struct ContentView: View {
                         .foregroundColor(Color.gray)
                 }
              }
-         })
+         }
+        )
+    }
+    
+    private var floatingActionButton : some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Button(action: {
+                    showSheetView = true
+                }, label: {
+                    Text("+")
+                    .font(.system(.largeTitle))
+                    .frame(width: 67, height: 60)
+                    .foregroundColor(Color.white)
+                    .padding(.bottom, 7)
+                })
+                .background(Color.blue)
+                .cornerRadius(38.5)
+                .padding()
+                
+            }
+        }
     }
     
     private var deleteButton : some View {
         Button(action: { itemsStore.items.removeAll() }) {
-            Image(systemName: "trash")
+            HStack {
+                Image(systemName: "trash")
+                Text("Borrar todo")
+            }
+            
         }
     }
     
