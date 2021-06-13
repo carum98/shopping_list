@@ -17,47 +17,22 @@ struct ContentView: View {
     
     @State var showSheetView = false
     @State var showingImagePicker = false
+    @State var modifyList = false
+
     @State var isEditing = false
+    
     @State var image: Image?
     
     var body: some View {
         NavigationView {
             ZStack {
-                VStack {
-                    listItems
-                }
+                listItems
                 floatingActionButton
             }
-
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .sheet(isPresented: $showSheetView, content: {
-            NavigationView {
-                Form {
-                    Section(header: Text("Nombre")) {
-                        TextField("Nombre del articulo", text: $itemName)
-                    }
-                    Section(header: Text("Description")) {
-                        TextField("Descripcion del articulo", text: $itemDescription)
-                    }
-                    Section(header: Text("Imagen")) {
-                        Button("Seleccionar Imagen", action: {
-                            self.showingImagePicker = true
-                        })
-                    }
-                    if (image != nil) {
-                        image?.resizable().scaledToFit()
-                    }
-                }
-                .navigationBarTitle("Nuevo articulo")
-                .navigationBarItems(
-                    leading:  Button("Cancelar", action: {showSheetView = false}),
-                    trailing:  Button("Guardar", action: { showSheetView = false; addItem() })
-                )
-            }
-            .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
-                ImagePicker(image: self.$inputImage)
-            }
+            formCreateItem
         })
     }
     
@@ -65,7 +40,7 @@ struct ContentView: View {
         List {
             ForEach(self.itemsStore.items, id: \.id) { item in
                 NavigationLink(
-                    destination: Text(item.name)) {
+                    destination: DetailItem(item: item)) {
                     RowItem(item: item)
                 }
             }
@@ -77,22 +52,15 @@ struct ContentView: View {
             }
         }
         .listStyle(InsetGroupedListStyle())
-        .environment(\.editMode, .constant(self.isEditing ? EditMode.active : EditMode.inactive)).animation(Animation.spring())
+        .environment(\.editMode, .constant(self.modifyList ? EditMode.active : EditMode.inactive)).animation(Animation.spring())
         .navigationBarTitle("Lista de compra")
         .navigationBarItems(
             leading: deleteButton, trailing: editButton
         )
         .overlay(Group {
-             if self.itemsStore.items.isEmpty {
-                VStack {
-                    Image(systemName: "archivebox")
-                        .font(.system(size: 50))
-                        .foregroundColor(Color.gray)
-                    Text("Lista vacia")
-                        .font(.system(size: 30))
-                        .foregroundColor(Color.gray)
-                }
-             }
+            if self.itemsStore.items.isEmpty {
+                emptyList
+            }
          }
         )
     }
@@ -114,7 +82,6 @@ struct ContentView: View {
                 .background(Color.blue)
                 .cornerRadius(38.5)
                 .padding()
-                
             }
         }
     }
@@ -130,11 +97,51 @@ struct ContentView: View {
     
     private var editButton : some View {
         Button(action: {
-            self.isEditing.toggle()
+            self.modifyList.toggle()
         }) {
-            Text(isEditing ? "Cancelar" : "Editar")
+            Text(modifyList ? "Cancelar" : "Modificar")
                 .frame(height: 40)
         }
+    }
+    
+    private var formCreateItem : some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Nombre")) {
+                    TextField("Nombre del articulo", text: $itemName)
+                }
+                Section(header: Text("Description")) {
+                    TextField("Descripcion del articulo", text: $itemDescription)
+                }
+                Section(header: Text("Imagen")) {
+                    Button("Seleccionar Imagen", action: {
+                        self.showingImagePicker = true
+                    })
+                }
+                if (image != nil) {
+                    image?.resizable().scaledToFit()
+                }
+            }
+            .navigationBarTitle(isEditing ? "Editar articulo" : "Nuevo articulo")
+            .navigationBarItems(
+                leading:  Button("Cancelar", action: {showSheetView = false}),
+                trailing:  Button("Guardar", action: { showSheetView = false; addItem() })
+            )
+        }
+        .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
+            ImagePicker(image: self.$inputImage)
+        }
+    }
+    
+    private var emptyList : some View {
+       VStack {
+           Image(systemName: "archivebox")
+               .font(.system(size: 50))
+               .foregroundColor(Color.gray)
+           Text("Lista vacia")
+               .font(.system(size: 30))
+               .foregroundColor(Color.gray)
+       }
     }
     
     private func addItem() {
@@ -155,7 +162,6 @@ struct ContentView: View {
         guard let inputImage = inputImage else { return }
         image = Image(uiImage: inputImage)
     }
-    
 }
 
 struct ContentView_Previews: PreviewProvider {
