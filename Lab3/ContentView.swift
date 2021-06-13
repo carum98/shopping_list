@@ -11,6 +11,9 @@ import Combine
 struct ContentView: View {
     @ObservedObject var itemsStore = ItemsStore()
     @State var itemName : String = ""
+    @State var itemDescription : String = ""
+    
+    
     @State var showSheetView = false
     
     var body: some View {
@@ -27,22 +30,20 @@ struct ContentView: View {
         .sheet(isPresented: $showSheetView, content: {
             NavigationView {
                 Form {
-                    inputItem
+                    Section(header: Text("Nombre")) {
+                        TextField("Nombre del articulo", text: $itemName)
+                    }
+                    Section(header: Text("Description")) {
+                        TextField("Descripcion del articulo", text: $itemDescription)
+                    }
                 }
                 .navigationBarTitle("Nuevo articulo")
                 .navigationBarItems(
-                    trailing: Button("Cancelar", action: {showSheetView = false}))
+                    leading:  Button("Cancelar", action: {showSheetView = false}),
+                    trailing:  Button("Guardar", action: { showSheetView = false; addItem() })
+                )
             }
         })
-    }
-    
-    private var inputItem : some View {
-        HStack {
-            TextField("Ingresar articulo", text: self.$itemName)
-            Button(action: addItem) {
-                Text("Guardar")
-            }
-        }.padding()
     }
     
     private var listItems : some View {
@@ -50,7 +51,7 @@ struct ContentView: View {
             ForEach(self.itemsStore.items, id: \.id) { item in
                 NavigationLink(
                     destination: Text(item.name)) {
-                    Text(item.name)
+                    RowItem(item: item)
                 }
             }
             .onMove {
@@ -113,8 +114,16 @@ struct ContentView: View {
     }
     
     private func addItem() {
-        itemsStore.items.append(Item(id: itemsStore.items.count + 1, name: itemName))
+        let item = Item(
+            id: itemsStore.items.count + 1,
+            name: itemName,
+            description: itemDescription,
+            path: ""
+        );
+        itemsStore.items.append(item)
+        
         self.itemName = ""
+        self.itemDescription = ""
     }
     
 }

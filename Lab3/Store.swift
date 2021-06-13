@@ -8,11 +8,6 @@
 import Foundation
 import Combine
 
-struct Item : Identifiable {
-    let id: Int;
-    var name: String;
-}
-
 class ItemsStore : ObservableObject {
     @Published var items = [Item]()
 }
