@@ -20,6 +20,7 @@ struct RowItem: View {
                 Text(item.name).bold()
                 Text(item.description).foregroundColor(.gray)
             }
+            Spacer()
         }
 
     }

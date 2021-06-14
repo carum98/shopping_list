@@ -31,7 +31,7 @@ struct ContentView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .sheet(isPresented: $showSheetView, content: {
+        .sheet(isPresented: $showSheetView, onDismiss: clearState, content: {
             formCreateItem
         })
     }
@@ -39,9 +39,8 @@ struct ContentView: View {
     private var listItems : some View {
         List {
             ForEach(self.itemsStore.items, id: \.id) { item in
-                NavigationLink(
-                    destination: DetailItem(item: item)) {
-                    RowItem(item: item)
+                RowItem(item: item).onTapGesture {
+                    openItem(item: item)
                 }
             }
             .onMove {
@@ -113,19 +112,29 @@ struct ContentView: View {
                 Section(header: Text("Description")) {
                     TextField("Descripcion del articulo", text: $itemDescription)
                 }
-                Section(header: Text("Imagen")) {
-                    Button("Seleccionar Imagen", action: {
-                        self.showingImagePicker = true
-                    })
-                }
                 if (image != nil) {
                     image?.resizable().scaledToFit()
+                } else {
+                    Section(header: Text("Imagen")) {
+                        Button("Seleccionar Imagen", action: {
+                            self.showingImagePicker = true
+                        })
+                    }
                 }
             }
             .navigationBarTitle(isEditing ? "Editar articulo" : "Nuevo articulo")
             .navigationBarItems(
-                leading:  Button("Cancelar", action: {showSheetView = false}),
-                trailing:  Button("Guardar", action: { showSheetView = false; addItem() })
+                leading: Button("Cancelar", action: {
+                        showSheetView = false
+                        clearState()
+                }),
+                trailing: Button(
+                    isEditing ? "Aplicar" : "Guardar",
+                     action: {
+                        showSheetView = false;
+                        isEditing ? editItem(index: 0) : addItem()
+                     })
+                    .disabled(itemName.isEmpty || itemDescription.isEmpty || image == nil)
             )
         }
         .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
@@ -144,6 +153,15 @@ struct ContentView: View {
        }
     }
     
+    private func openItem(item: Item) {
+        showSheetView = true
+        isEditing = true
+        
+        itemName = item.name
+        itemDescription = item.description
+        image = item.image
+    }
+    
     private func addItem() {
         let item = Item(
             id: itemsStore.items.count + 1,
@@ -151,11 +169,21 @@ struct ContentView: View {
             description: itemDescription,
             image: image
         );
-        itemsStore.items.append(item)
         
+        itemsStore.items.append(item)
+    }
+    
+    private func editItem(index : Int) {
+        self.itemsStore.items[index].name = itemName
+        self.itemsStore.items[index].description = itemDescription
+    }
+    
+    private func clearState() {
         self.itemName = ""
         self.itemDescription = ""
         self.image = nil
+        
+        self.isEditing = false
     }
     
     func loadImage() {
